@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "148528820934",
+    "project_id": "my-cw-rent-apartment",
+    "storage_bucket": "my-cw-rent-apartment.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:148528820934:android:acd8ff1654b0c4ea5f1dc7",
+        "android_client_info": {
+          "package_name": "greenwich.edu.vn.apartment_project"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "148528820934-vbl5o4l25v6ep745f827e0q0cqithqe3.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBnSvshKjAkKerzN7Hz1ivVS0Wrc1Cq3Ow"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "148528820934-vbl5o4l25v6ep745f827e0q0cqithqe3.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
