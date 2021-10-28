@@ -7,3 +7,5 @@ const styleHeading_2Text = TextStyle(fontSize: 16,overflow: TextOverflow.ellipsi
 
 const styleHeading_3Text = TextStyle(fontSize: 22, fontWeight: FontWeight.bold,overflow: TextOverflow.ellipsis);
 
+const dialogTextStyle = TextStyle(fontSize: 24, fontWeight: FontWeight.bold, overflow: TextOverflow.clip);
+

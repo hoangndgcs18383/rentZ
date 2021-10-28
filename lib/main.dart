@@ -1,8 +1,9 @@
-
-import 'package:apartment_project/screens/home_page.dart';
+import 'package:apartment_project/models/user.dart';
 import 'package:apartment_project/shares/custom_color.dart';
+import 'package:apartment_project/wrapper.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 
 
 
@@ -23,17 +24,22 @@ class MyApp extends StatefulWidget {
 class _MyAppState extends State<MyApp> {
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-        debugShowCheckedModeBanner: false,
-        title: 'Apartment Rent',
-        theme: ThemeData(
-        primarySwatch: Colors.grey,
-        scaffoldBackgroundColor: CustomColors.googleBackground.withOpacity(0.7),
-          textTheme: Theme.of(context).textTheme.copyWith(
-            bodyText1: Theme.of(context).textTheme.bodyText1?.apply(color: CustomColors.firebaseWhite),
-          )
-    ),
-    home: HomePage());
+    return StreamProvider<MyUser?>.value(
+      value: UserData().user,
+      initialData: null,
+      catchError: (User, MyUser) => null,
+      child: MaterialApp(
+          debugShowCheckedModeBanner: false,
+          title: 'Apartment Rent',
+          theme: ThemeData(
+          primarySwatch: Colors.blueGrey,
+          scaffoldBackgroundColor: CustomColors.googleBackground.withOpacity(0.7),
+            textTheme: Theme.of(context).textTheme.copyWith(
+              bodyText1: Theme.of(context).textTheme.bodyText1?.apply(color: CustomColors.firebaseWhite),
+            )
+      ),
+      home: Wrapper()),
+    );
   }
 }
 

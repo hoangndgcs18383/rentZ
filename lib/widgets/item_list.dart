@@ -1,4 +1,5 @@
 import 'package:apartment_project/models/apartments.dart';
+import 'package:apartment_project/models/user.dart';
 import 'package:apartment_project/screens/edit_screen.dart';
 import 'package:apartment_project/shares/const.dart';
 import 'package:apartment_project/shares/custom_color.dart';
@@ -32,6 +33,7 @@ class ItemList extends StatelessWidget {
               int price = noteInfo.get('price');
               String nameReporter = noteInfo.get('nameOwn');
               String note = noteInfo.get('note');
+              UserData user = UserData();
 
               return Ink(
                 decoration: BoxDecoration(

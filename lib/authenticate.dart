@@ -1,4 +1,5 @@
 import 'package:apartment_project/screens/home_page.dart';
+import 'package:apartment_project/screens/register_page.dart';
 import 'package:flutter/material.dart';
 
 class Authenticate extends StatefulWidget {
@@ -9,10 +10,21 @@ class Authenticate extends StatefulWidget {
 }
 
 class _AuthenticateState extends State<Authenticate> {
+
+  bool isToggle = true;
+  void toggle(){
+   setState(() {
+     isToggle = !isToggle;
+   });
+  }
+
   @override
   Widget build(BuildContext context) {
-    return Container(
-      child: HomePage(),
-    );
+    if(isToggle){
+      return LoginPage(toggleScreen : toggle);
+    }
+    else{
+      return RegisterPage(toggleScreen: toggle);
+    }
   }
 }

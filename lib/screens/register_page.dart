@@ -1,30 +1,31 @@
 import 'package:apartment_project/shares/custom_color.dart';
 import 'package:apartment_project/widgets/login_form.dart';
+import 'package:apartment_project/widgets/register_form.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
-class LoginPage extends StatefulWidget {
+class RegisterPage extends StatefulWidget {
   final Function toggleScreen;
-  const LoginPage({Key? key, required this.toggleScreen}) : super(key: key);
+  const RegisterPage({Key? key, required this.toggleScreen}) : super(key: key);
 
   @override
-  _LoginPageState createState() => _LoginPageState();
+  _RegisterPageState createState() => _RegisterPageState();
 }
 
 final FocusNode _usernameFocusNode = FocusNode();
 final FocusNode _passwordFocusNode = FocusNode();
 Future<FirebaseApp> _initializeFirebase() async {
   FirebaseApp firebaseApp = await Firebase.initializeApp();
-
   return firebaseApp;
 }
 
-class _LoginPageState extends State<LoginPage> {
+class _RegisterPageState extends State<RegisterPage> {
   @override
   Widget build(BuildContext context) {
     return GestureDetector(
-      onTap: () => _usernameFocusNode.unfocus(),
+      onTap: () =>
+          _usernameFocusNode.unfocus(),
       child: Scaffold(
         backgroundColor: CustomColors.firebaseNavy,
         body: SafeArea(
@@ -58,7 +59,7 @@ class _LoginPageState extends State<LoginPage> {
                         ),
                       ),
                       Text(
-                        'Sign up to join with us',
+                        'Create an account to join',
                         style: TextStyle(
                           color: CustomColors.firebaseOrange,
                           fontSize: 32,
@@ -74,7 +75,7 @@ class _LoginPageState extends State<LoginPage> {
                       return Text('Error initializing Firebase');
                     } else if (snapshot.connectionState ==
                         ConnectionState.done) {
-                      return LoginForm(
+                      return RegisterForm(
                         usernameFocusNode: _usernameFocusNode,
                         passwordFocusNode: _passwordFocusNode,
                       );
@@ -90,7 +91,7 @@ class _LoginPageState extends State<LoginPage> {
                 Row(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
-                    Text("Dont't have an account?"
+                    Text("Have already an account?"
                       ,
                       style: TextStyle(
                         color: Colors.white70,
@@ -103,7 +104,7 @@ class _LoginPageState extends State<LoginPage> {
                       onPressed: (){
                         widget.toggleScreen();
                       },
-                      child: Text('Register',
+                      child: Text('Log in',
                         style: TextStyle(
                             color: Colors.red,
                             fontSize: 16,

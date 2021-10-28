@@ -1,4 +1,5 @@
 import 'package:apartment_project/models/apartments.dart';
+import 'package:apartment_project/shares/const.dart';
 import 'package:apartment_project/shares/custom_color.dart';
 import 'package:apartment_project/widgets/custom_appbar.dart';
 import 'package:apartment_project/widgets/custom_edit_form.dart';
@@ -90,20 +91,46 @@ class _EditScreenState extends State<EditScreen> {
                 color: Colors.redAccent,
                 size: 32,
               ),
-              onPressed: () async {
-                setState(() {
-                  _isDeleting = true;
-                });
-
-                await ApartmentData.deleteApartment(
-                  docId: widget.documentId,
-                );
-
-                setState(() {
-                  _isDeleting = false;
-                });
-
-                Navigator.of(context).pop();
+              onPressed: () {
+                  showDialog(
+                      context: context,
+                      builder: (_context){
+                        return AlertDialog(
+                          title: Text("Delete?", style: TextStyle(
+                            color: Colors.red,
+                            fontWeight: FontWeight.bold,
+                            fontSize: 30,
+                          ),),
+                          content: Text("Would you like to delete this?",style: TextStyle(
+                            fontWeight: FontWeight.bold,
+                            fontSize: 20,
+                          ),),
+                          actions: [
+                            TextButton(
+                                onPressed: () async {
+                                  setState(() {
+                                    _isDeleting = true;
+                                    Navigator.of(context).pop();
+                                  });
+                                  await ApartmentData.deleteApartment(
+                                    docId: widget.documentId,
+                                  );
+                                  Navigator.of(context).pop();
+                                },
+                                child: Text("Yes", style: dialogTextStyle,)),
+                            TextButton(
+                                onPressed: (){
+                                  setState(() {
+                                    _isDeleting = false;
+                                    Navigator.of(context).pop();
+                                  });
+                                },
+                                child: Text("No", style: dialogTextStyle,)),
+                          ],
+                          elevation: 24.0,
+                          backgroundColor: CustomColors.firebaseYellow,
+                        );
+                      });
               },
             ),
           ],

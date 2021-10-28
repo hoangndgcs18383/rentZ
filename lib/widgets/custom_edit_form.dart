@@ -1,8 +1,12 @@
+import 'dart:io';
+import 'package:apartment_project/shares/const.dart';
+import 'package:path/path.dart' as path;
 import 'package:apartment_project/models/apartments.dart';
 import 'package:apartment_project/shares/custom_color.dart';
 import 'package:apartment_project/shares/vadidator.dart';
+import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
-
+import 'package:image_picker/image_picker.dart';
 import 'custom_form_field.dart';
 
 class EditItemForm extends StatefulWidget {
@@ -26,7 +30,6 @@ class EditItemForm extends StatefulWidget {
   final int currentPrice;
   final String currentNote;
   final String currentNameReporter;
-
   final String documentId;
 
   const EditItemForm({
@@ -117,6 +120,42 @@ class _EditItemFormState extends State<EditItemForm> {
     super.initState();
   }
 
+
+  late File _image;
+  late PickedFile _imageFile;
+  final picker = ImagePicker();
+  FirebaseStorage storage = FirebaseStorage.instance;
+
+  Future<void> _upload(ImageSource inputSource) async {
+    try {
+      final pickedImage =
+      await ImagePicker().pickImage(source: inputSource, maxWidth: 1920);
+
+      final String fileName = path.basename(pickedImage!.path);
+      File imageFile = File(pickedImage.path);
+
+      try {
+        // Uploading the selected image with some custom meta data
+        await storage
+            .ref(fileName)
+            .putFile(imageFile, SettableMetadata(customMetadata: {}));
+
+        // Refresh the UI
+        setState(() {});
+      } on FirebaseException catch (error) {
+        print(error);
+      }
+    } catch (err) {
+      print(err);
+    }
+  }
+
+  Future<void> _delete(String ref) async {
+    await storage.ref(ref).delete();
+    setState(() {});
+  }
+
+
   @override
   Widget build(BuildContext context) {
     return Form(
@@ -159,7 +198,7 @@ class _EditItemFormState extends State<EditItemForm> {
 
                 SizedBox(height: 24.0),
                 Text(
-                  'Name Apartment',
+                  'Rental Name',
                   style: TextStyle(
                     color: CustomColors.firebaseWhite,
                     fontSize: 22.0,
@@ -177,8 +216,8 @@ class _EditItemFormState extends State<EditItemForm> {
                   validator: (value) => Validator.validateField(
                     value: value,
                   ),
-                  label: 'Apartment Name',
-                  hint: 'Enter your apartment name...',
+                  label: 'Rental Name',
+                  hint: 'Enter your rental name...',
                 ),
 
                 SizedBox(height: 24.0),
@@ -207,7 +246,7 @@ class _EditItemFormState extends State<EditItemForm> {
 
                 SizedBox(height: 24.0),
                 Text(
-                  'Type Furniture',
+                  'Property Furniture',
                   style: TextStyle(
                     color: CustomColors.firebaseWhite,
                     fontSize: 22.0,
@@ -217,7 +256,8 @@ class _EditItemFormState extends State<EditItemForm> {
                 ),
                 SizedBox(height: 8.0),
                 DropdownButtonFormField(
-                    hint: const Text("Select type furniture",
+                    onTap: () => FocusScope.of(context).unfocus(),
+                    hint: const Text("Select property furniture",
                       style: TextStyle(
                           color: Colors.deepOrangeAccent
                       ),),
@@ -234,6 +274,42 @@ class _EditItemFormState extends State<EditItemForm> {
                     value: _furnitureController.text,
                     onChanged: (val) => _furnitureController.text = val.toString(),
                     items: _listFurniture.map((type) =>
+                        DropdownMenuItem(
+                          value: type,
+                          child: Text(type),
+                        )).toList()
+                ),
+
+                SizedBox(height: 24.0),
+                Text(
+                  'Property Type',
+                  style: TextStyle(
+                    color: CustomColors.firebaseWhite,
+                    fontSize: 22.0,
+                    letterSpacing: 1,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+                SizedBox(height: 8.0),
+                DropdownButtonFormField(
+                    onTap: () => FocusScope.of(context).unfocus(),
+                    hint: const Text("Select property type",
+                      style: TextStyle(
+                          color: Colors.deepOrangeAccent
+                      ),),
+                    icon: const Icon(Icons.home_work),
+                    style: const TextStyle(
+                      fontSize: 20,
+                      fontWeight: FontWeight.bold,
+                      color: Colors.deepOrangeAccent,
+                    ),
+                    iconEnabledColor: Colors.lime,
+                    focusNode: widget.typeFocusNode,
+                    dropdownColor: Colors.limeAccent,
+                    iconSize: 40,
+                    value: _typeController.text,
+                    onChanged: (val) => _typeController.text = val.toString(),
+                    items: _listType.map((type) =>
                         DropdownMenuItem(
                           value: type,
                           child: Text(type),
@@ -329,12 +405,13 @@ class _EditItemFormState extends State<EditItemForm> {
                   focusNode: widget.priceFocusNode,
                   keyboardType: TextInputType.text,
                   inputAction: TextInputAction.done,
-                  validator: (value) => Validator.validateNumber(
+                  validator: (value) => Validator.validatePrice(
                     value: value,
                   ),
                   label: 'Number',
                   hint: 'Enter the monthly price...',
                 ),
+
 
                 SizedBox(height: 24.0),
                 Text(
@@ -360,9 +437,30 @@ class _EditItemFormState extends State<EditItemForm> {
                   label: 'Note',
                   hint: 'Enter a note(optional)...',
                 ),
+                SizedBox(height: 8.0),
+                Container(
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      ElevatedButton.icon(
+                          onPressed: () => _upload(ImageSource.camera),
+                          icon: Icon(Icons.camera),
+                          label: Text('Camera')),
+                      ElevatedButton.icon(
+                          onPressed: () => _upload(ImageSource.gallery),
+                          icon: Icon(Icons.library_add),
+                          label: Text('Gallery')),
+                      ElevatedButton.icon(
+                          onPressed: () => _delete(_image.path),
+                          icon: Icon(Icons.delete),
+                          label: Text('Delete')),
+                    ],
+                  ),
+                ),
               ],
             ),
           ),
+
           _isProcessing
               ? Padding(
             padding: const EdgeInsets.all(16.0),
@@ -386,34 +484,71 @@ class _EditItemFormState extends State<EditItemForm> {
                 ),
               ),
               onPressed: () async {
+                showDialog(
+                    context: context,
+                    builder: (_context){
+                      return AlertDialog(
+                        title: Text("Confirm your information",
+                            style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold)),
+                        content: Text(
+                          'Name Reporter: ' + _nameReporterController.text + '\n\n' +
+                              'Rental name: ' + _apartmentNameController.text + '\n\n' +
+                              'Furniture: ' + _furnitureController.text + '\n\n' +
+                              'Type: ' + _typeController.text + '\n\n' +
+                              'Number of Bedroom: ' + _numBedController.text + '\n\n' +
+                              'Number of Kitten: ' + _numKitController.text + '\n\n' +
+                              'Number of Bathroom: ' + _numBathController.text + '\n\n' +
+                              'Price: ' + _priceController.text + '\n\n' +
+                              'Note: ' + _noteController.text + '\n\n'
+                          ,
+                          style: TextStyle(fontSize: 20, fontWeight: FontWeight.w400),
+                        ),
+                        actions: [
+                          TextButton(
+                              onPressed: () async {
+                                setState(() async {
+                                  widget.apartmentNameFocusNode.unfocus();
+                                  widget.noteFocusNode.unfocus();
+                                  if (_editItemFormKey.currentState!.validate()) {
+                                    setState(() {
+                                      Navigator.of(context).pop();
+                                      _isProcessing = true;
+                                    });
+                                    await ApartmentData.updateApartment(
+                                      docId: widget.documentId,
+                                      nameApm: _apartmentNameController.text,
+                                      address: _addressController.text,
+                                      furniture: _furnitureController.text,
+                                      type: _typeController.text,
+                                      numBath: int.parse(_numBathController.text),
+                                      numBed: int.parse(_numBedController.text),
+                                      numKit: int.parse(_numKitController.text),
+                                      price: int.parse(_priceController.text),
+                                      note: _noteController.text,
+                                      nameOwn: _nameReporterController.text,
+                                    );
+                                    Navigator.of(context).pop();
+                                  }
+                                });
+                                Navigator.of(context).pop();
+                              },
+                              child: Text("Yes", style: dialogTextStyle,)),
+                          TextButton(
+                              onPressed: (){
+                                setState(() {
+                                  _isProcessing = false;
+                                  Navigator.of(context).pop();
+                                });
+                              },
+                              child: Text("No", style: dialogTextStyle,)),
+                        ],
+                        elevation: 24.0,
+                        backgroundColor: CustomColors.firebaseWhite,
+                      );
+                    });
                 widget.apartmentNameFocusNode.unfocus();
                 widget.noteFocusNode.unfocus();
 
-                if (_editItemFormKey.currentState!.validate()) {
-                  setState(() {
-                    _isProcessing = true;
-                  });
-
-                  await ApartmentData.updateApartment(
-                    docId: widget.documentId,
-                    nameApm: _apartmentNameController.text,
-                    address: _addressController.text,
-                    furniture: _furnitureController.text,
-                    type: _typeController.text,
-                    numBath: widget.currentNumBath,
-                    numBed: widget.currentNumBed,
-                    numKit: widget.currentNumKit,
-                    price: widget.currentPrice,
-                    note: _noteController.text,
-                    nameOwn: _nameReporterController.text,
-                  );
-
-                  setState(() {
-                    _isProcessing = false;
-                  });
-
-                  Navigator.of(context).pop();
-                }
               },
               child: Padding(
                 padding: EdgeInsets.only(top: 16.0, bottom: 16.0),

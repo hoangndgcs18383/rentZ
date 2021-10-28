@@ -5,28 +5,27 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 
 class DetailApartment extends StatelessWidget {
-  final int index;
-  const DetailApartment({Key? key, required this.index}) : super(key: key);
+  final QueryDocumentSnapshot<Object?> data;
+  const DetailApartment({Key? key, required this.data}) : super(key: key);
 
 
   @override
   Widget build(BuildContext context) {
     var media = MediaQuery.of(context);
-    late int currentIndex = index;
     return StreamBuilder<QuerySnapshot>(
       stream: ApartmentData.readApartments(),
       builder: (context, snapshot) {
-        var noteInfo = snapshot.data!.docs[currentIndex];
-        String nameApm = noteInfo.get('nameApm');
-        String address = noteInfo.get('address');
-        String type = noteInfo.get('type');
-        String furniture = noteInfo.get('furniture');
-        int numBed = noteInfo.get('numBed');
-        int numKit = noteInfo.get('numKit');
-        int numBath = noteInfo.get('numBath');
-        int price = noteInfo.get('price');
-        String nameReporter = noteInfo.get('nameOwn');
-        String note = noteInfo.get('note');
+        final address = data.get('address');
+        final nameApm = data.get('nameApm');
+        final numBed = data.get('numBed');
+        final numKit = data.get('numKit');
+        final numBath = data.get('numBath');
+        final price = data.get('price');
+        final note = data.get('note');
+        final furniture = data.get('furniture');
+        final type = data.get('type');
+        final nameReporter = data.get('nameOwn');
+
         return Scaffold(
           body: Column(
             children: <Widget>[
@@ -133,7 +132,7 @@ class DetailApartment extends StatelessWidget {
                             children: <Widget>[
                               CircleAvatar(
                                 child: ClipRRect(
-                                  child: Image.asset("assets/images/logo.png"),
+                                  child: Image.asset("assets/images/logo.jpeg", fit: BoxFit.fill,),
                                   borderRadius: BorderRadius.all(Radius.circular(10)),
                                 ),
                               ),
@@ -142,7 +141,7 @@ class DetailApartment extends StatelessWidget {
                                   child: Column(
                                 crossAxisAlignment: CrossAxisAlignment.start,
                                     children: <Widget>[
-                                      Text(nameReporter, style: TextStyle(
+                                      Text("$nameReporter", style: TextStyle(
                                         color: CustomColors.firebaseYellow,
                                         fontWeight: FontWeight.bold,
                                       ),),
@@ -185,7 +184,7 @@ class DetailApartment extends StatelessWidget {
                           child: Column(
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: <Widget>[
-                              Text("Property Furniture : $furniture", style: TextStyle(
+                              Text("Property Furniture - $furniture", style: TextStyle(
                                 color: Colors.yellow,
                                 fontSize: 18,
                                 fontWeight: FontWeight.w600,

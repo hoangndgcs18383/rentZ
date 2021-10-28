@@ -1,17 +1,18 @@
+import 'package:apartment_project/models/user.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:flutter/cupertino.dart';
 
 
 
-final CollectionReference _mainCollection =  FirebaseFirestore.instance.collection('rentZ');
+final CollectionReference _mainCollection =  FirebaseFirestore.instance.collection('rentalZ');
 
 class ApartmentField{
   static const createdTime = 'createdTime';
 }
 
 class ApartmentData{
-  static String? uid;
-  static String? password;
-
+  static String? username;
+  static MyUser user = MyUser(uid: 'uid');
 
   static Future<void> addApartment({
     required String nameOwn,
@@ -24,7 +25,7 @@ class ApartmentData{
     required int numBath,
     required int price,
     required String note}) async{
-    DocumentReference docApartment = _mainCollection.doc(uid).collection("data").doc();
+    DocumentReference docApartment = _mainCollection.doc(user.uid).collection("data").doc();
 
     Map<String, dynamic> apartmentData = <String,dynamic>{
         'nameOwn' : nameOwn,
@@ -39,12 +40,12 @@ class ApartmentData{
         'note': note,
     };
     await docApartment
-        .set(apartmentData).whenComplete(() => print("The apartment added $nameApm"))
+        .set(apartmentData).whenComplete(() => print("The apartment update $nameApm"))
         .catchError((error) => print(error));
   }
   static Stream<QuerySnapshot> readApartments() {
     CollectionReference docApartment =
-    _mainCollection.doc(uid).collection("data");
+    _mainCollection.doc(user.uid).collection("data");
     return docApartment.snapshots();
   }
 
@@ -62,7 +63,7 @@ class ApartmentData{
     required int numBath,
     required int price,
     required String note}) async{
-    DocumentReference docApartment = _mainCollection.doc(uid).collection('data').doc(docId);
+    DocumentReference docApartment = _mainCollection.doc(user.uid).collection('data').doc(docId);
 
     Map<String, dynamic> apartmentData = <String,dynamic>{
       'nameOwn' : nameOwn,
@@ -84,10 +85,12 @@ class ApartmentData{
   static Future<void> deleteApartment({
     required String docId
     }) async{
-    DocumentReference docApartment = _mainCollection.doc(uid).collection('data').doc(docId);
+    DocumentReference docApartment = _mainCollection.doc(user.uid).collection('data').doc(docId);
 
     await docApartment
         .delete().whenComplete(() => print("The apartment deleted"))
         .catchError((error) => print(error));
   }
+
 }
+

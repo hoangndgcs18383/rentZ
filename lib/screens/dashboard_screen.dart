@@ -1,12 +1,17 @@
+import 'package:apartment_project/authenticate.dart';
+import 'package:apartment_project/models/menu_item.dart';
+import 'package:apartment_project/models/user.dart';
 import 'package:apartment_project/screens/search_screen.dart';
 import 'package:apartment_project/shares/custom_color.dart';
 import 'package:apartment_project/widgets/custom_appbar.dart';
 import 'package:apartment_project/widgets/item_list.dart';
+import 'package:apartment_project/widgets/search_bar/custom_search_bar.dart';
 import 'package:flutter/material.dart';
 import 'about_screen.dart';
 import 'add_screen.dart';
 import 'contact_screen.dart';
 import 'list_screen.dart';
+import 'package:animations/animations.dart';
 
 class DashboardScreen extends StatefulWidget {
   @override
@@ -14,15 +19,10 @@ class DashboardScreen extends StatefulWidget {
 }
 
 class _DashboardScreenState extends State<DashboardScreen> {
-  final FocusNode _nameFocusNode = FocusNode();
-  final FocusNode _emailFocusNode = FocusNode();
-  final FocusNode _passwordFocusNode = FocusNode();
-
+  final UserData user = UserData();
   int currentIndex = 0;
   final screens = [
     ListScreen(),
-    SearchScreen(),
-    ContactScreen(),
     AboutScreen(),
   ];
 
@@ -34,6 +34,17 @@ class _DashboardScreenState extends State<DashboardScreen> {
         elevation: 0,
         backgroundColor: CustomColors.firebaseNavy,
         title: AppBarTitle(),
+        actions: [
+          SearchBar(),
+          PopupMenuButton<MenuItem>(
+              onSelected: (item) => onSelected(context, item),
+              itemBuilder: (context) =>
+            [
+              ...MenuItems.itemFirst.map((buildItem)).toList(),
+              ...MenuItems.itemSecond.map((buildItem)).toList()
+            ]
+          )
+        ],
       ),
       floatingActionButton: FloatingActionButton(
         onPressed: () {
@@ -50,7 +61,16 @@ class _DashboardScreenState extends State<DashboardScreen> {
           size: 32,
         ),
       ),
-      body: screens[currentIndex],
+      body: PageTransitionSwitcher(
+        duration: Duration(seconds: 1),
+          transitionBuilder: (child, animation, secondaryAnimation) =>
+            FadeThroughTransition(
+                animation: animation,
+                secondaryAnimation: secondaryAnimation,
+                child: child,
+            )
+          ,
+          child: screens[currentIndex]),
       bottomNavigationBar: BottomNavigationBar(
           type: BottomNavigationBarType.fixed,
           onTap: (index) => setState(() {
@@ -67,18 +87,37 @@ class _DashboardScreenState extends State<DashboardScreen> {
               label: 'Home',
             ),
             BottomNavigationBarItem(
-              icon: Icon(Icons.search),
-              label: 'Search'
-              ,),
-            BottomNavigationBarItem(
-              icon: Icon(Icons.assignment_ind_outlined),
-              label: 'About',
-            ),
-            BottomNavigationBarItem(
               icon: Icon(Icons.contact_mail),
               label: 'Contact'
               ,),
           ]),
     );
+  }
+
+  PopupMenuItem<MenuItem> buildItem(MenuItem item) => PopupMenuItem<MenuItem>(
+    value: item,
+    child: Row(
+      children: [
+        Icon(
+          item.icon, color: Colors.white70, size: 20,
+        ),
+        Text(item.text),
+      ],
+    ),
+  );
+
+  Future<void> onSelected(BuildContext context, MenuItem item) async {
+    if(item == MenuItems.itemSetting){
+      Navigator.of(context).push(MaterialPageRoute(builder: (context)
+       => Authenticate()));
+    }
+    else if(item == MenuItems.itemShare){
+      Navigator.of(context).push(MaterialPageRoute(builder: (context)
+      => Authenticate()));
+    }
+    else if(item == MenuItems.itemLogout){
+      await user.signOut();
+      Navigator.pop(context);
+    }
   }
 }

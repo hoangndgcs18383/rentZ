@@ -7,6 +7,7 @@ import 'package:flutter/material.dart';
 class AddScreen extends StatelessWidget {
   final FocusNode _apartmentNameFocusNode = FocusNode();
   final FocusNode _addressFocusNode = FocusNode();
+  final FocusNode _cityFocusNode = FocusNode();
   final FocusNode _furnitureFocusNode = FocusNode();
   final FocusNode _typeFocusNode = FocusNode();
   final FocusNode _numBedFocusNode = FocusNode();
@@ -49,6 +50,7 @@ class AddScreen extends StatelessWidget {
               child: AddItemForm(
                 apartmentNameFocusNode: _apartmentNameFocusNode,
                 addressFocusNode: _addressFocusNode,
+                cityFocusNode: _cityFocusNode,
                 furnitureFocusNode: _furnitureFocusNode,
                 typeFocusNode: _typeFocusNode,
                 numBathFocusNode: _numBathFocusNode,

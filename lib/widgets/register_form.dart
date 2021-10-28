@@ -1,6 +1,5 @@
 import 'package:apartment_project/models/apartments.dart';
 import 'package:apartment_project/models/user.dart';
-import 'package:apartment_project/screens/home_page.dart';
 import 'package:apartment_project/shares/custom_color.dart';
 import 'package:apartment_project/shares/vadidator.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -12,28 +11,28 @@ import 'custom_form_field.dart';
 
 
 
-class LoginForm extends StatefulWidget {
+class RegisterForm extends StatefulWidget {
   final FocusNode usernameFocusNode;
   final FocusNode passwordFocusNode;
 
-  const LoginForm({
+  const RegisterForm({
     Key? key,
     required this.passwordFocusNode,
     required this.usernameFocusNode,
   }) : super(key: key);
   @override
-  _LoginFormState createState() => _LoginFormState();
+  _RegisterFormState createState() => _RegisterFormState();
 }
 
-class _LoginFormState extends State<LoginForm> {
-  TextEditingController _uidController = TextEditingController();
+class _RegisterFormState extends State<RegisterForm> {
+  TextEditingController _usernameController = TextEditingController();
   TextEditingController _passwordController = TextEditingController();
   final UserData user = UserData();
   final _loginInFormKey = GlobalKey<FormState>();
   @override
 
   void initState() {
-    _uidController = TextEditingController();
+    _usernameController = TextEditingController();
     _passwordController = TextEditingController();
     super.initState();
   }
@@ -41,7 +40,7 @@ class _LoginFormState extends State<LoginForm> {
   @override
 
   void dispose(){
-    _uidController.dispose();
+    _usernameController.dispose();
     _passwordController.dispose();
     super.dispose();
   }
@@ -62,7 +61,7 @@ class _LoginFormState extends State<LoginForm> {
             child: Column(
               children: [
                 CustomFormField(
-                  controller: _uidController,
+                  controller: _usernameController,
                   focusNode: widget.usernameFocusNode,
                   keyboardType: TextInputType.text,
                   inputAction: TextInputAction.done,
@@ -70,7 +69,7 @@ class _LoginFormState extends State<LoginForm> {
                     email: value,
                   ),
                   label: 'Username',
-                  hint: 'Enter your username',
+                  hint: 'Enter your username(email)',
                 ),
                 SizedBox(height: 24.0,),
                 CustomFormField(
@@ -106,7 +105,7 @@ class _LoginFormState extends State<LoginForm> {
                   widget.usernameFocusNode.unfocus();
                   widget.passwordFocusNode.unfocus();
                   if (_loginInFormKey.currentState!.validate()) {
-                    dynamic result = await user.signWithEmailAndPassword(_uidController, _passwordController);
+                    dynamic result = await user.registerWithEmailAndPassword(_usernameController, _passwordController);
                     if(result == null){
                       print("error");
                     }
@@ -122,7 +121,7 @@ class _LoginFormState extends State<LoginForm> {
                 child: Padding(
                   padding: EdgeInsets.only(top: 16.0, bottom: 16.0),
                   child: Text(
-                    'LOGIN',
+                    'Submit',
                     style: TextStyle(
                       fontSize: 24,
                       fontWeight: FontWeight.bold,

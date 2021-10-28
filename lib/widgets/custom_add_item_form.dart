@@ -1,5 +1,9 @@
+import 'dart:convert';
 import 'dart:io';
+import 'package:apartment_project/models/address.dart';
 import 'package:apartment_project/models/apartments.dart';
+import 'package:apartment_project/models/local_api.dart';
+import 'package:apartment_project/shares/const.dart';
 import 'package:apartment_project/shares/custom_color.dart';
 import 'package:apartment_project/shares/vadidator.dart';
 import 'package:firebase_storage/firebase_storage.dart';
@@ -8,12 +12,14 @@ import 'package:flutter/services.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:path/path.dart' as path;
 import 'custom_form_field.dart';
+import 'package:flutter/services.dart' as _root;
 
 class AddItemForm extends StatefulWidget {
   //define focus node
   final FocusNode apartmentNameFocusNode;
   final FocusNode addressFocusNode;
   final FocusNode furnitureFocusNode;
+  final FocusNode cityFocusNode;
   final FocusNode typeFocusNode;
   final FocusNode numBedFocusNode;
   final FocusNode numKitFocusNode;
@@ -25,6 +31,7 @@ class AddItemForm extends StatefulWidget {
   const AddItemForm({
     required this.apartmentNameFocusNode,
     required this.addressFocusNode,
+    required this.cityFocusNode,
     required this.furnitureFocusNode,
     required this.typeFocusNode,
     required this.numBedFocusNode,
@@ -41,6 +48,7 @@ class AddItemForm extends StatefulWidget {
 
 class _AddItemFormState extends State<AddItemForm> {
   final _addItemFormKey = GlobalKey<FormState>();
+
   final _listFurniture = [
     'Furnished',
     'Unfurnished',
@@ -52,11 +60,13 @@ class _AddItemFormState extends State<AddItemForm> {
     'House',
     'Villa'
   ];
+
   bool _isProcessing = false;
   final TextEditingController _apartmentNameController = TextEditingController();
   final TextEditingController _addressController = TextEditingController();
   String? _furnitureController;
   String? _typeController;
+  String? _cityController;
   // TextEditingController _typeController = TextEditingController();
   final TextEditingController _numBedController = TextEditingController();
   final TextEditingController _numKitController = TextEditingController();
@@ -67,6 +77,7 @@ class _AddItemFormState extends State<AddItemForm> {
 
   //Picker Image Controller
   late File _image;
+  late PickedFile _imageFile;
   final picker = ImagePicker();
   FirebaseStorage storage = FirebaseStorage.instance;
 
@@ -94,15 +105,20 @@ class _AddItemFormState extends State<AddItemForm> {
     }
   }
 
-  // Delete the selected image
-  // This function is called when a trash icon is pressed
   Future<void> _delete(String ref) async {
     await storage.ref(ref).delete();
-    // Rebuild the UI
     setState(() {});
   }
 
+  int? _city;
+  String? _district;
   @override
+  void initState(){
+    LocalApi();
+    super.initState();
+  }
+  @override
+
   Widget build(BuildContext context) {
     return Form(
         key: _addItemFormKey,
@@ -142,7 +158,7 @@ class _AddItemFormState extends State<AddItemForm> {
                   ),
                   SizedBox(height: 24.0),
                   Text(
-                    'Name Apartment',
+                    'Rental Name',
                     style: TextStyle(
                       color: CustomColors.firebaseWhite,
                       fontSize: 22.0,
@@ -160,8 +176,8 @@ class _AddItemFormState extends State<AddItemForm> {
                     validator: (value) => Validator.validateField(
                       value: value,
                     ),
-                    label: 'Apartment Name',
-                    hint: 'Enter your apartment name...',
+                    label: 'Rental Name',
+                    hint: 'Enter your rental name...',
                   ),
                   SizedBox(height: 24.0),
                   Text(
@@ -186,9 +202,146 @@ class _AddItemFormState extends State<AddItemForm> {
                     label: 'Address',
                     hint: 'Enter your address...',
                   ),
+                  // SizedBox(height: 8.0),
+                  // FutureBuilder<List<City>>(
+                  //   future: LocalApi.getLocal(),
+                  //   builder: (context, snapshot){
+                  //     if(!snapshot.hasData){
+                  //       return Padding(
+                  //         padding: const EdgeInsets.all(16.0),
+                  //         child: CircularProgressIndicator(
+                  //           valueColor: AlwaysStoppedAnimation<Color>(
+                  //             CustomColors.firebaseOrange,
+                  //           ),
+                  //         ),
+                  //       );
+                  //     }
+                  //     else if(snapshot.hasError){
+                  //       return Text("error");
+                  //     }
+                  //     else{
+                  //       var items = snapshot.data as List<City>;
+                  //       return DropdownButtonFormField<String>(
+                  //           hint: const Text(
+                  //             "Select city",
+                  //             style: TextStyle(color: Colors.white),
+                  //           ),
+                  //           style: const TextStyle(
+                  //             fontSize: 20,
+                  //             fontWeight: FontWeight.bold,
+                  //             color: Colors.white,
+                  //           ),
+                  //           iconEnabledColor: Colors.lime,
+                  //           focusNode: widget.cityFocusNode,
+                  //           dropdownColor: Colors.blueAccent,
+                  //           onChanged: (String? val) => setState(() {
+                  //             _city = val as int?;
+                  //             print(_city);
+                  //           }),
+                  //           value: _city.toString(),
+                  //           items: items.map((type) => DropdownMenuItem<String>(
+                  //             value: type.code.toString(),
+                  //             child: Text(type.name.toString()),
+                  //           )).toList());
+                  //     }
+                  //   },
+                  // ),
+                  // SizedBox(height: 24.0),
+                  // FutureBuilder(
+                  //   future: DistrictsApi.getLocal(),
+                  //   builder: (context, snapshot){
+                  //     if(!snapshot.hasData){
+                  //       return Padding(
+                  //         padding: const EdgeInsets.all(16.0),
+                  //         child: CircularProgressIndicator(
+                  //           valueColor: AlwaysStoppedAnimation<Color>(
+                  //             CustomColors.firebaseOrange,
+                  //           ),
+                  //         ),
+                  //       );
+                  //     }
+                  //     else if(snapshot.hasError){
+                  //       return Text("error");
+                  //     }
+                  //     else{
+                  //       var items = snapshot.data as List<District>;
+                  //       return DropdownButtonFormField(
+                  //           hint: const Text(
+                  //             "Select district",
+                  //             style: TextStyle(color: Colors.white),
+                  //           ),
+                  //           style: const TextStyle(
+                  //             fontSize: 20,
+                  //             fontWeight: FontWeight.bold,
+                  //             color: Colors.white,
+                  //           ),
+                  //           iconEnabledColor: Colors.lime,
+                  //           focusNode: widget.furnitureFocusNode,
+                  //           dropdownColor: Colors.blueAccent,
+                  //           onChanged: (String? val) => setState(() {
+                  //             LocalApi.getLocal();
+                  //             _district = val;
+                  //           }),
+                  //           value: _district,
+                  //           items: items
+                  //               .map((type) => DropdownMenuItem(
+                  //             value: type.name,
+                  //             child: Text(type.name.toString()),
+                  //           ))
+                  //               .toList());
+                  //     }
+                  //   },
+                  // ),
+                  //
+                  // SizedBox(height: 24.0),
+                  // FutureBuilder(
+                  //   future: WardApi.getLocal(),
+                  //   builder: (context, snapshot){
+                  //     if(!snapshot.hasData){
+                  //       return Padding(
+                  //         padding: const EdgeInsets.all(16.0),
+                  //         child: CircularProgressIndicator(
+                  //           valueColor: AlwaysStoppedAnimation<Color>(
+                  //             CustomColors.firebaseOrange,
+                  //           ),
+                  //         ),
+                  //       );
+                  //     }
+                  //     else if(snapshot.hasError){
+                  //       return Text("error");
+                  //     }
+                  //     else{
+                  //       var items = snapshot.data as List<Ward>;
+                  //       return DropdownButtonFormField(
+                  //           hint: const Text(
+                  //             "Select ward",
+                  //             style: TextStyle(color: Colors.white),
+                  //           ),
+                  //           style: const TextStyle(
+                  //             fontSize: 20,
+                  //             fontWeight: FontWeight.bold,
+                  //             color: Colors.white,
+                  //           ),
+                  //           iconEnabledColor: Colors.lime,
+                  //           focusNode: widget.furnitureFocusNode,
+                  //           dropdownColor: Colors.blueAccent,
+                  //           onChanged: (val) => setState(() {
+                  //             _furnitureController = val as String?;
+                  //           }),
+                  //           value: _furnitureController,
+                  //           items: items
+                  //               .map((type) => DropdownMenuItem(
+                  //             value: type.name,
+                  //             child: Text(type.name.toString()),
+                  //           ))
+                  //               .toList());
+                  //     }
+                  //   },
+                  // ),
+
                   SizedBox(height: 24.0),
                   Text(
-                    'Type Furniture',
+                    'Property Furniture',
                     style: TextStyle(
                       color: CustomColors.firebaseWhite,
                       fontSize: 22.0,
@@ -198,9 +351,10 @@ class _AddItemFormState extends State<AddItemForm> {
                   ),
                   SizedBox(height: 8.0),
                   DropdownButtonFormField(
+                      onTap: () => FocusScope.of(context).unfocus(),
                       hint: const Text(
                         "Select property furniture",
-                        style: TextStyle(color: Colors.black),
+                        style: TextStyle(color: Colors.lightGreenAccent),
                       ),
                       icon: const Icon(Icons.home_filled),
                       style: const TextStyle(
@@ -222,11 +376,23 @@ class _AddItemFormState extends State<AddItemForm> {
                                 child: Text(type),
                               ))
                           .toList()),
-                  SizedBox(height: 8.0),
+                  SizedBox(height: 24.0),
+                  Text(
+                    'Property Type',
+                    style: TextStyle(
+                      color: CustomColors.firebaseWhite,
+                      fontSize: 22.0,
+                      letterSpacing: 1,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+
+                  SizedBox(height: 24.0),
                   DropdownButtonFormField(
+                    onTap: () => FocusScope.of(context).unfocus(),
                       hint: const Text(
                         "Select property type",
-                        style: TextStyle(color: Colors.black),
+                        style: TextStyle(color: Colors.lightGreenAccent),
                       ),
                       icon: const Icon(Icons.home_work),
                       style: const TextStyle(
@@ -296,7 +462,7 @@ class _AddItemFormState extends State<AddItemForm> {
                   ),
                   SizedBox(height: 24.0),
                   Text(
-                    'Bedroom',
+                    'Bathroom',
                     style: TextStyle(
                       color: CustomColors.firebaseWhite,
                       fontSize: 22.0,
@@ -334,7 +500,7 @@ class _AddItemFormState extends State<AddItemForm> {
                     focusNode: widget.priceFocusNode,
                     keyboardType: TextInputType.text,
                     inputAction: TextInputAction.done,
-                    validator: (value) => Validator.validateNumber(
+                    validator: (value) => Validator.validatePrice(
                       value: value,
                     ),
                     label: 'Number',
@@ -364,6 +530,7 @@ class _AddItemFormState extends State<AddItemForm> {
                     label: 'Note',
                     hint: 'Enter a note(optional)...',
                   ),
+                  SizedBox(height: 8.0),
                   Container(
                     child: Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -383,7 +550,7 @@ class _AddItemFormState extends State<AddItemForm> {
                       ],
                     ),
                   ),
-                  SizedBox(height: 8.0),
+                  SizedBox(height: 24.0),
                   _isProcessing
                       ? Padding(
                           padding: const EdgeInsets.all(16.0),
@@ -407,33 +574,65 @@ class _AddItemFormState extends State<AddItemForm> {
                               ),
                             ),
                             onPressed: () async {
-                              widget.apartmentNameFocusNode.unfocus();
-                              widget.noteFocusNode.unfocus();
-
-                              if (_addItemFormKey.currentState!.validate()) {
-                                setState(() {
-                                  _isProcessing = true;
-                                });
-
-                                await ApartmentData.addApartment(
-                                  nameApm: _apartmentNameController.text,
-                                  address: _addressController.text,
-                                  furniture: _furnitureController.toString(),
-                                  type: _typeController.toString(),
-                                  numBath: int.parse(_numBathController.text),
-                                  numBed: int.parse(_numBedController.text),
-                                  numKit: int.parse(_numKitController.text),
-                                  price: int.parse(_priceController.text),
-                                  note: _noteController.text,
-                                  nameOwn: _nameReporterController.text,
-                                );
-
-                                setState(() {
-                                  _isProcessing = false;
-                                });
-
-                                Navigator.of(context).pop();
-                              }
+                              showDialog(
+                                  context: context,
+                                  builder: (_context){
+                                    return AlertDialog(
+                                      title: Text("Confirm your information",
+                                          style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold)),
+                                      content: Text(
+                                        'Name Reporter: ' + _nameReporterController.text + '\n\n' +
+                                          'Rental name: ' + _apartmentNameController.text + '\n\n' +
+                                            'Furniture: ' + _furnitureController.toString() + '\n\n' +
+                                            'Type: ' + _typeController.toString() + '\n\n' +
+                                            'Number of Bedroom: ' + _numBedController.text + '\n\n' +
+                                            'Number of Kitten: ' + _numKitController.text + '\n\n' +
+                                            'Number of Bathroom: ' + _numBathController.text + '\n\n' +
+                                            'Price: ' + _priceController.text + '\n\n' +
+                                            'Note: ' + _noteController.text + '\n\n'
+                                            ,
+                                        style: TextStyle(fontSize: 20, fontWeight: FontWeight.w400),
+                                      ),
+                                      actions: [
+                                        TextButton(
+                                            onPressed: () async {
+                                              setState(() async {
+                                                widget.apartmentNameFocusNode.unfocus();
+                                                widget.noteFocusNode.unfocus();
+                                                if (_addItemFormKey.currentState!.validate()){
+                                                  Navigator.of(context).pop();
+                                                  await ApartmentData.addApartment(
+                                                    nameApm: _apartmentNameController.text,
+                                                    address: _addressController.text,
+                                                    furniture: _furnitureController.toString(),
+                                                    type: _typeController.toString(),
+                                                    numBath: int.parse(_numBathController.text),
+                                                    numBed: int.parse(_numBedController.text),
+                                                    numKit: int.parse(_numKitController.text),
+                                                    price: int.parse(_priceController.text),
+                                                    note: _noteController.text,
+                                                    nameOwn: _nameReporterController.text,
+                                                  );
+                                                  _isProcessing = true;
+                                                  Navigator.of(context).pop();
+                                                }
+                                              });
+                                              Navigator.of(context).pop();
+                                            },
+                                            child: Text("Yes", style: dialogTextStyle,)),
+                                        TextButton(
+                                            onPressed: (){
+                                              setState(() {
+                                                _isProcessing = false;
+                                                Navigator.of(context).pop();
+                                              });
+                                            },
+                                            child: Text("No", style: dialogTextStyle,)),
+                                      ],
+                                      elevation: 24.0,
+                                      backgroundColor: CustomColors.firebaseWhite,
+                                    );
+                                  });
                             },
                             child: Padding(
                               padding: EdgeInsets.only(top: 16.0, bottom: 16.0),
