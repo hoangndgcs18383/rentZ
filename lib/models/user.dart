@@ -1,3 +1,4 @@
+import 'package:apartment_project/models/user_data.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
 
@@ -28,10 +29,11 @@ class UserData{
     }
   }
 
-  Future registerWithEmailAndPassword(TextEditingController email, TextEditingController password)async {
+  Future registerWithEmailAndPassword(TextEditingController email, TextEditingController password) async {
     try{
       UserCredential credential = await _auth.createUserWithEmailAndPassword(email: email.text, password: password.text);
       User? user = credential.user;
+      // await Database(uid: user!.uid).updateUserData('new member', 'assets/images/logo.png', '');
       return _userFormFirebaseUser(user!);
     } catch(e){
       print(e.toString());

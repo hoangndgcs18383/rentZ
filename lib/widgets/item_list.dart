@@ -6,8 +6,6 @@ import 'package:apartment_project/shares/custom_color.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 
-
-
 class ItemList extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
@@ -25,6 +23,7 @@ class ItemList extends StatelessWidget {
               String docID = snapshot.data!.docs[index].id;
               String nameApm = noteInfo.get('nameApm');
               String address = noteInfo.get('address');
+              String city = noteInfo.get('city');
               String furniture = noteInfo.get('furniture');
               String type = noteInfo.get('type');
               int numBed = noteInfo.get('numBed');
@@ -33,7 +32,6 @@ class ItemList extends StatelessWidget {
               int price = noteInfo.get('price');
               String nameReporter = noteInfo.get('nameOwn');
               String note = noteInfo.get('note');
-              UserData user = UserData();
 
               return Ink(
                 decoration: BoxDecoration(
@@ -49,6 +47,7 @@ class ItemList extends StatelessWidget {
                       builder: (context) => EditScreen(
                         currentApartmentName: nameApm,
                         currentAddress: address,
+                        currentCity: city,
                         currentFurniture: furniture,
                         currentType: type,
                         currentNumKit: numKit,

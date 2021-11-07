@@ -1,9 +1,11 @@
 import 'package:apartment_project/authenticate.dart';
 import 'package:apartment_project/models/menu_item.dart';
 import 'package:apartment_project/models/user.dart';
+import 'package:apartment_project/screens/edit_profile_sceen.dart';
 import 'package:apartment_project/screens/search_screen.dart';
 import 'package:apartment_project/shares/custom_color.dart';
 import 'package:apartment_project/widgets/custom_appbar.dart';
+import 'package:apartment_project/widgets/custom_nav_bar_menu.dart';
 import 'package:apartment_project/widgets/item_list.dart';
 import 'package:apartment_project/widgets/search_bar/custom_search_bar.dart';
 import 'package:flutter/material.dart';
@@ -23,6 +25,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
   int currentIndex = 0;
   final screens = [
     ListScreen(),
+    AddScreen(),
     AboutScreen(),
   ];
 
@@ -30,6 +33,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: CustomColors.firebaseNavy,
+      drawer: NavBarMenu(),
       appBar: AppBar(
         elevation: 0,
         backgroundColor: CustomColors.firebaseNavy,
@@ -46,21 +50,21 @@ class _DashboardScreenState extends State<DashboardScreen> {
           )
         ],
       ),
-      floatingActionButton: FloatingActionButton(
-        onPressed: () {
-          Navigator.of(context).push(
-            MaterialPageRoute(
-              builder: (context) => AddScreen(),
-            ),
-          );
-        },
-        backgroundColor: CustomColors.firebaseOrange,
-        child: const Icon(
-          Icons.add,
-          color: Colors.white,
-          size: 32,
-        ),
-      ),
+      // floatingActionButton: FloatingActionButton(
+      //   onPressed: () {
+      //     Navigator.of(context).push(
+      //       MaterialPageRoute(
+      //         builder: (context) => AddScreen(),
+      //       ),
+      //     );
+      //   },
+      //   backgroundColor: CustomColors.firebaseOrange,
+      //   child: const Icon(
+      //     Icons.add,
+      //     color: Colors.white,
+      //     size: 32,
+      //   ),
+      // ),
       body: PageTransitionSwitcher(
         duration: Duration(seconds: 1),
           transitionBuilder: (child, animation, secondaryAnimation) =>
@@ -83,8 +87,12 @@ class _DashboardScreenState extends State<DashboardScreen> {
           unselectedItemColor: CustomColors.firebaseBlack,
           items: const [
             BottomNavigationBarItem(
-              icon: Icon(Icons.home),
-              label: 'Home',
+              icon: Icon(Icons.list),
+              label: 'List property',
+            ),
+            BottomNavigationBarItem(
+              icon: Icon(Icons.list),
+              label: 'New property',
             ),
             BottomNavigationBarItem(
               icon: Icon(Icons.contact_mail),
@@ -109,15 +117,15 @@ class _DashboardScreenState extends State<DashboardScreen> {
   Future<void> onSelected(BuildContext context, MenuItem item) async {
     if(item == MenuItems.itemSetting){
       Navigator.of(context).push(MaterialPageRoute(builder: (context)
-       => Authenticate()));
+       => EditProfile()));
     }
     else if(item == MenuItems.itemShare){
       Navigator.of(context).push(MaterialPageRoute(builder: (context)
       => Authenticate()));
     }
     else if(item == MenuItems.itemLogout){
-      await user.signOut();
-      Navigator.pop(context);
+      Navigator.of(context).push(MaterialPageRoute(builder: (context)
+      => Authenticate()));
     }
   }
 }

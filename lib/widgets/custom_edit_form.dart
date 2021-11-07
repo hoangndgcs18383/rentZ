@@ -1,5 +1,8 @@
 import 'dart:io';
+import 'package:apartment_project/models/address.dart';
+import 'package:apartment_project/models/local_api.dart';
 import 'package:apartment_project/shares/const.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:path/path.dart' as path;
 import 'package:apartment_project/models/apartments.dart';
 import 'package:apartment_project/shares/custom_color.dart';
@@ -13,6 +16,7 @@ class EditItemForm extends StatefulWidget {
   //define focus node
   final FocusNode apartmentNameFocusNode;
   final FocusNode addressFocusNode;
+  final FocusNode cityFocusNode;
   final FocusNode furnitureFocusNode;
   final FocusNode typeFocusNode;
   final FocusNode numBedFocusNode;
@@ -24,6 +28,7 @@ class EditItemForm extends StatefulWidget {
   //define values
   final String currentApartmentName;
   final String currentAddress;
+  final String currentCity;
   final String currentFurniture;
   final String currentType;
   final int currentNumBed, currentNumKit, currentNumBath;
@@ -35,6 +40,7 @@ class EditItemForm extends StatefulWidget {
   const EditItemForm({
     required this.apartmentNameFocusNode,
     required this.addressFocusNode,
+    required this.cityFocusNode,
     required this.furnitureFocusNode,
     required this.typeFocusNode,
     required this.numBedFocusNode,
@@ -45,6 +51,7 @@ class EditItemForm extends StatefulWidget {
     required this.nameReporterFocusNode,
     required this.currentApartmentName,
     required this.currentAddress,
+    required this.currentCity,
     required this.currentFurniture,
     required this.currentType,
     required this.currentNumBed,
@@ -73,8 +80,12 @@ class _EditItemFormState extends State<EditItemForm> {
     'House',
     'Villa'
   ];
+
+  int? _city;
+
   late TextEditingController _apartmentNameController;
   late TextEditingController _addressController;
+  late TextEditingController _cityController;
   late TextEditingController _furnitureController;
   late TextEditingController _typeController;
   late TextEditingController _noteController;
@@ -91,6 +102,9 @@ class _EditItemFormState extends State<EditItemForm> {
     );
     _addressController = TextEditingController(
       text: widget.currentAddress,
+    );
+    _cityController = TextEditingController(
+      text: widget.currentCity,
     );
     _furnitureController = TextEditingController(
       text: widget.currentFurniture,
@@ -242,6 +256,51 @@ class _EditItemFormState extends State<EditItemForm> {
                   ),
                   label: 'Address',
                   hint: 'Enter your address...',
+                ),
+
+                SizedBox(height: 8.0),
+                FutureBuilder<List<City>>(
+                  future: LocalApi.getLocal(),
+                  builder: (context, snapshot){
+                    if(!snapshot.hasData){
+                      return Padding(
+                        padding: const EdgeInsets.all(16.0),
+                        child: CircularProgressIndicator(
+                          valueColor: AlwaysStoppedAnimation<Color>(
+                            CustomColors.firebaseOrange,
+                          ),
+                        ),
+                      );
+                    }
+                    else if(snapshot.hasError){
+                      return Text("error");
+                    }
+                    else{
+                      var items = snapshot.data as List<City>;
+                      return DropdownButtonFormField(
+                          hint: const Text(
+                            "Select city",
+                            style: TextStyle(color: Colors.white),
+                          ),
+                          style: const TextStyle(
+                            fontSize: 20,
+                            fontWeight: FontWeight.bold,
+                            color: Colors.white,
+                          ),
+                          iconEnabledColor: Colors.lime,
+                          focusNode: widget.cityFocusNode,
+                          dropdownColor: Colors.blueAccent,
+                          onChanged: (String? val) => setState(() {
+                            _cityController.text = val!;
+                            print(_cityController.text);
+                          }),
+                          value: _cityController.text,
+                          items: items.map((type) => DropdownMenuItem(
+                            value: type.name,
+                            child: Text(type.name.toString()),
+                          )).toList());
+                    }
+                  },
                 ),
 
                 SizedBox(height: 24.0),
@@ -518,6 +577,7 @@ class _EditItemFormState extends State<EditItemForm> {
                                       docId: widget.documentId,
                                       nameApm: _apartmentNameController.text,
                                       address: _addressController.text,
+                                      city: _cityController.text,
                                       furniture: _furnitureController.text,
                                       type: _typeController.text,
                                       numBath: int.parse(_numBathController.text),

@@ -2,6 +2,7 @@ import 'package:apartment_project/models/apartments.dart';
 import 'package:apartment_project/shares/const.dart';
 import 'package:apartment_project/shares/custom_color.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 
 class DetailApartment extends StatelessWidget {

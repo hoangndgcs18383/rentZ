@@ -34,11 +34,6 @@ class AddScreen extends StatelessWidget {
       },
       child: Scaffold(
         backgroundColor: CustomColors.firebaseNavy,
-        appBar: AppBar(
-          elevation: 0,
-          backgroundColor: CustomColors.firebaseNavy,
-          title: AppBarTitle(),
-        ),
         body: SafeArea(
           child: Padding(
             padding: const EdgeInsets.only(

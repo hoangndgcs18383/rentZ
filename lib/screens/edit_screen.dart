@@ -9,6 +9,7 @@ class EditScreen extends StatefulWidget {
   //define values
   final String currentApartmentName;
   final String currentAddress;
+  final String currentCity;
   final String currentFurniture;
   final String currentType;
   final int currentNumBed, currentNumKit, currentNumBath;
@@ -20,6 +21,7 @@ class EditScreen extends StatefulWidget {
   EditScreen({
     required this.currentApartmentName,
     required this.currentAddress,
+    required this.currentCity,
     required this.currentFurniture,
     required this.currentType,
     required this.currentNumBed,
@@ -38,6 +40,7 @@ class EditScreen extends StatefulWidget {
 class _EditScreenState extends State<EditScreen> {
   final FocusNode _apartmentNameFocusNode = FocusNode();
   final FocusNode _addressFocusNode = FocusNode();
+  final FocusNode _cityFocusNode = FocusNode();
   final FocusNode _furnitureFocusNode = FocusNode();
   final FocusNode _typeFocusNode = FocusNode();
   final FocusNode _numBedFocusNode = FocusNode();
@@ -55,6 +58,7 @@ class _EditScreenState extends State<EditScreen> {
       onTap: () {
         _apartmentNameFocusNode.unfocus();
         _addressFocusNode.unfocus();
+        _cityFocusNode.unfocus();
         _furnitureFocusNode.unfocus();
         _typeFocusNode.unfocus();
         _numBedFocusNode.unfocus();
@@ -148,6 +152,7 @@ class _EditScreenState extends State<EditScreen> {
                 //Focus node
                 apartmentNameFocusNode: _apartmentNameFocusNode,
                 addressFocusNode: _addressFocusNode,
+                cityFocusNode: _cityFocusNode,
                 furnitureFocusNode: _furnitureFocusNode,
                 typeFocusNode: _typeFocusNode,
                 numBedFocusNode: _numBedFocusNode,
@@ -159,6 +164,7 @@ class _EditScreenState extends State<EditScreen> {
                 //edit
                 currentApartmentName: widget.currentApartmentName,
                 currentAddress: widget.currentAddress,
+                currentCity: widget.currentCity,
                 currentFurniture: widget.currentFurniture,
                 currentType: widget.currentType,
                 currentNumBed: widget.currentNumBed,

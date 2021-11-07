@@ -1,13 +1,16 @@
 import 'package:apartment_project/models/apartments.dart';
 import 'package:apartment_project/models/user.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import '../custom_detail_item_list.dart';
 
+final FirebaseAuth auth = FirebaseAuth.instance;
+
 class Search extends SearchDelegate{
-  static MyUser user = MyUser(uid: 'uid');
-  final CollectionReference _collectionReference = FirebaseFirestore.instance.collection('rentalZ')
-      .doc('uid').collection('data');
+
+  final CollectionReference _collectionReference = FirebaseFirestore.instance.collection('data')
+      .doc('rentalZ').collection(auth.currentUser!.uid);
 
 
   @override
