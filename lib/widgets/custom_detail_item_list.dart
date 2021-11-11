@@ -17,6 +17,7 @@ class DetailApartment extends StatelessWidget {
       stream: ApartmentData.readApartments(),
       builder: (context, snapshot) {
         final address = data.get('address');
+        final city = data.get('city');
         final nameApm = data.get('nameApm');
         final numBed = data.get('numBed');
         final numKit = data.get('numKit');
@@ -75,8 +76,15 @@ class DetailApartment extends StatelessWidget {
                                 children: <Widget>[
                                   Container(
                                     width: media.size.width-112,
-                                    child: Text("$address, $nameApm",
-                                      style: styleHeading_1Text.copyWith(color: CustomColors.firebaseYellow),
+                                    child: Text("Rental Name: $nameApm",
+                                      style: styleHeading_1Text.copyWith(color: CustomColors.firebaseAmber),
+                                    ),
+                                  ),
+                                  SizedBox(height: 8,),
+                                  Container(
+                                    width: media.size.width-112,
+                                    child: Text("$address, $city",
+                                      style: styleHeading_2Text.copyWith(color: CustomColors.firebaseYellow),
                                     ),
                                   ),
                                   SizedBox(height: 8,),
@@ -134,7 +142,7 @@ class DetailApartment extends StatelessWidget {
                               CircleAvatar(
                                 child: ClipRRect(
                                   child: Image.asset("assets/images/logo.jpeg", fit: BoxFit.fill,),
-                                  borderRadius: BorderRadius.all(Radius.circular(10)),
+                                  borderRadius: BorderRadius.all(Radius.circular(24)),
                                 ),
                               ),
                               SizedBox(width: 16,),

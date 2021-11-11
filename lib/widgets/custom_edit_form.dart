@@ -553,6 +553,8 @@ class _EditItemFormState extends State<EditItemForm> {
                           'Name Reporter: ' + _nameReporterController.text + '\n\n' +
                               'Rental name: ' + _apartmentNameController.text + '\n\n' +
                               'Furniture: ' + _furnitureController.text + '\n\n' +
+                              'Address: ' + _addressController.text + '\n\n' +
+                              'city: ' + _cityController.text + '\n\n' +
                               'Type: ' + _typeController.text + '\n\n' +
                               'Number of Bedroom: ' + _numBedController.text + '\n\n' +
                               'Number of Kitten: ' + _numKitController.text + '\n\n' +
