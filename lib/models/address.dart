@@ -1,14 +1,34 @@
 
-
 class City {
   String? name;
   int? code;
+  List<District>? districts;
 
-  City({this.name, this.code});
+  City(this.name, this.code, [this.districts]);
 
-   City.fromJson(Map<String, dynamic> json){
-    name = json["name"];
-    code = json['code'];
+  factory City.fromJson(dynamic json) {
+    if (json['districts'] != null) {
+      var districtObjJson = json['districts'] as List;
+      List<District> _district = districtObjJson.map((districtJson) => District.fromJson(districtJson))
+          .toList();
+
+        return City(
+          json['name'] as String,
+          json['code'] as int,
+          _district
+      );
+    } else {
+      return City(
+          json['name'] as String,
+          json['code'] as int,
+      );
+    }
+
+    // City.fromJson(Map<String, dynamic> json)
+    // {
+    //   name = json["name"] as String;
+    //   code = json['code'] as int;
+    // }
   }
 }
 
@@ -19,8 +39,8 @@ class District{
   District({this.name, this.code});
 
   District.fromJson(Map<String, dynamic> json){
-    name = json['name'];
-    code = json['province_code'];
+    name = json['name'] as String;
+    code = json['code'] as int;
   }
 }
 
@@ -30,7 +50,7 @@ class Ward{
   Ward({this.name});
 
   Ward.fromJson(Map<String, dynamic> json){
-    name = json['name'];
+    name = json['name'] as String;
   }
 }
 

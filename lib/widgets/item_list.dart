@@ -3,6 +3,7 @@ import 'package:apartment_project/models/user.dart';
 import 'package:apartment_project/screens/edit_screen.dart';
 import 'package:apartment_project/shares/const.dart';
 import 'package:apartment_project/shares/custom_color.dart';
+import 'package:apartment_project/widgets/custom_detail_item_list.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 
@@ -42,23 +43,9 @@ class ItemList extends StatelessWidget {
                   shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(8.0),
                   ),
-                  onTap: () => Navigator.of(context).push(
-                    MaterialPageRoute(
-                      builder: (context) => EditScreen(
-                        currentApartmentName: nameApm,
-                        currentAddress: address,
-                        currentCity: city,
-                        currentFurniture: furniture,
-                        currentType: type,
-                        currentNumKit: numKit,
-                        currentNumBed: numBed,
-                        currentNumBath: numBath,
-                        currentPrice: price,
-                        currentNameReporter: nameReporter,
-                        currentNote: note,
-                        documentId: docID,
-                      ),
-                    ),
+                  onTap: () =>  Navigator.push(context,
+                      MaterialPageRoute(builder: (context) =>
+                          DetailApartment(data: noteInfo))
                   ),
                   title: Text(
                     "$nameApm posted by $nameReporter",
@@ -67,18 +54,37 @@ class ItemList extends StatelessWidget {
                     style: styleHeading_2Text.copyWith(color: CustomColors.firebaseBlack.withOpacity(0.8)),
                   ),
                   subtitle: Text(
-                    "Address: $address",
+                    "$price\$/month",
                     maxLines: 2 ,
                     overflow: TextOverflow.ellipsis,
                     style: styleHeading_2Text.copyWith(color: CustomColors.firebaseAmber),
                   ),
                   leading: const Icon(Icons.home, size: 38, color: Colors.yellow,),
-                  trailing: Text(
-                    ('$price\$/month'),
-                    maxLines: 1,
-                    overflow: TextOverflow.ellipsis,
-                    style: styleHeading_2Text.copyWith(color: CustomColors.firebaseYellow),
-                  ),
+                  trailing: IconButton(
+                    icon: Icon(Icons.edit),
+                    iconSize: 38,
+                    color: Colors.lightGreenAccent,
+                    onPressed: (){
+                      Navigator.of(context).push(
+                        MaterialPageRoute(
+                          builder: (context) => EditScreen(
+                            currentApartmentName: nameApm,
+                            currentAddress: address,
+                            currentCity: city,
+                            currentFurniture: furniture,
+                            currentType: type,
+                            currentNumKit: numKit,
+                            currentNumBed: numBed,
+                            currentNumBath: numBath,
+                            currentPrice: price,
+                            currentNameReporter: nameReporter,
+                            currentNote: note,
+                            documentId: docID,
+                          ),
+                        ),
+                      );
+                    },
+                  )
                 ),
               );
             },

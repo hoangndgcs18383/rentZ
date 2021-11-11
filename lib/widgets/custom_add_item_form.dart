@@ -112,7 +112,7 @@ class _AddItemFormState extends State<AddItemForm> {
   }
 
   int? _city;
-  String? _district;
+  int? _district;
   @override
   void initState(){
     LocalApi();
@@ -236,12 +236,12 @@ class _AddItemFormState extends State<AddItemForm> {
                             focusNode: widget.cityFocusNode,
                             dropdownColor: Colors.blueAccent,
                             onChanged: (val) => setState(() {
-                              _cityController = val as String?;
-                              print(_cityController);
+                              _city = val as int;
+                              print(_city);
                             }),
-                            value: _cityController,
+                            value: _city,
                             items: items.map((type) => DropdownMenuItem(
-                              value: type.name,
+                              value: type.code,
                               child: Text(type.name.toString()),
                             )).toList());
                       }
@@ -249,7 +249,7 @@ class _AddItemFormState extends State<AddItemForm> {
                   ),
                   // SizedBox(height: 24.0),
                   // FutureBuilder(
-                  //   future: DistrictsApi.getLocal(),
+                  //   future: LocalApi.getLocal(),
                   //   builder: (context, snapshot){
                   //     if(!snapshot.hasData){
                   //       return Padding(
@@ -265,7 +265,7 @@ class _AddItemFormState extends State<AddItemForm> {
                   //       return Text("error");
                   //     }
                   //     else{
-                  //       var items = snapshot.data as List<District>;
+                  //       var items = snapshot.data as List<City>;
                   //       return DropdownButtonFormField(
                   //           hint: const Text(
                   //             "Select district",
@@ -279,14 +279,13 @@ class _AddItemFormState extends State<AddItemForm> {
                   //           iconEnabledColor: Colors.lime,
                   //           focusNode: widget.furnitureFocusNode,
                   //           dropdownColor: Colors.blueAccent,
-                  //           onChanged: (String? val) => setState(() {
-                  //             LocalApi.getLocal();
-                  //             _district = val;
+                  //           onChanged: (val) => setState(() {
+                  //             _district = val as int;
                   //           }),
                   //           value: _district,
                   //           items: items
                   //               .map((type) => DropdownMenuItem(
-                  //             value: type.name,
+                  //             value: type.code,
                   //             child: Text(type.name.toString()),
                   //           ))
                   //               .toList());

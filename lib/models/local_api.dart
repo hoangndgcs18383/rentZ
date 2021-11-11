@@ -3,7 +3,7 @@ import 'address.dart';
 import 'package:http/http.dart' as http ;
 class LocalApi{
   static Future<List<City>> getLocal() async {
-    final url = Uri.parse('https://provinces.open-api.vn/api/p/');
+    final url = Uri.parse('https://provinces.open-api.vn/api/?depth=3');
     final response = await http.get(url);
 
     final List cities = json.decode(utf8.decode(response.bodyBytes));
